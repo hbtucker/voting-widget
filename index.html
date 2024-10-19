@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Pages Voting Widget</title>
+    <title>Voting Widget</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
@@ -80,49 +80,62 @@
     </div>
 
     <script>
+        const API_URL = 'http://localhost:3000/api/votes';
         const voteButton = document.getElementById('vote-button');
         const personalVoteCount = document.getElementById('personal-vote-count');
         const totalVoteCount = document.getElementById('total-vote-count');
         const voteMessage = document.getElementById('vote-message');
         const totalVotesContainer = document.getElementById('total-votes-container');
-        const personalStorageKey = 'githubPagesPersonalVoteCount';
-        const totalStorageKey = 'githubPagesTotalVoteCount';
-        const sessionKey = 'githubPagesVoteSession';
+        const personalStorageKey = 'personalVoteCount';
+        const sessionKey = 'voteSession';
 
-        // Load the initial vote counts
         let personalVotes = parseInt(localStorage.getItem(personalStorageKey)) || 0;
-        let totalVotes = parseInt(localStorage.getItem(totalStorageKey)) || 0;
-        updateVoteCounts();
+        updatePersonalVoteCount();
 
-        // Check if the user has already voted in this session
         if (sessionStorage.getItem(sessionKey)) {
             disableVoting();
         }
 
-        voteButton.addEventListener('click', () => {
+        fetchTotalVotes();
+
+        voteButton.addEventListener('click', async () => {
             if (!sessionStorage.getItem(sessionKey)) {
-                personalVotes++;
-                totalVotes++;
-                updateVoteCounts();
-                saveVotes();
-                sessionStorage.setItem(sessionKey, 'true');
-                disableVoting();
+                try {
+                    const response = await fetch(API_URL, { method: 'POST' });
+                    const data = await response.json();
+                    personalVotes++;
+                    updatePersonalVoteCount();
+                    updateTotalVoteCount(data.totalVotes);
+                    sessionStorage.setItem(sessionKey, 'true');
+                    disableVoting();
+                } catch (error) {
+                    console.error('Error submitting vote:', error);
+                }
             }
         });
 
-        function updateVoteCounts() {
-            personalVoteCount.textContent = personalVotes;
-            totalVoteCount.textContent = totalVotes;
+        async function fetchTotalVotes() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                updateTotalVoteCount(data.totalVotes);
+            } catch (error) {
+                console.error('Error fetching total votes:', error);
+            }
         }
 
-        function saveVotes() {
+        function updatePersonalVoteCount() {
+            personalVoteCount.textContent = personalVotes;
             localStorage.setItem(personalStorageKey, personalVotes.toString());
-            localStorage.setItem(totalStorageKey, totalVotes.toString());
+        }
+
+        function updateTotalVoteCount(totalVotes) {
+            totalVoteCount.textContent = totalVotes;
         }
 
         function disableVoting() {
             voteButton.disabled = true;
-            voteMessage.textContent = "Thanks!";
+            voteMessage.textContent = "You've already voted in this session. Thanks for participating!";
             totalVotesContainer.style.display = 'block';
         }
     </script>

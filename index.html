@@ -88,7 +88,7 @@
         const personalStorageKey = 'personalVoteCount';
         const sessionKey = 'voteSession';
 
-        let personalVotes = parseInt(localStorage.getItem(personalStorageKey)) || ();
+        let personalVotes = parseInt(localStorage.getItem(personalStorageKey)) || 0;
         updatePersonalVoteCount();
 
         if (sessionStorage.getItem(sessionKey)) {

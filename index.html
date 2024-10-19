@@ -21,11 +21,7 @@
             padding: 20px;
             border-radius: 8px;
             background-color: transparent;
-        }
-        #vote-container {
-            display: flex;
-            align-items: center;
-            gap: 20px;
+            text-align: center;
         }
         #vote-button {
             background-color: #f0f0f0;
@@ -37,6 +33,7 @@
             border-radius: 20px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            margin-bottom: 10px;
         }
         #vote-button:hover {
             background-color: #e0e0e0;
@@ -50,35 +47,35 @@
             font-size: 24px;
             font-weight: bold;
             color: #4F9768;
+            margin-bottom: 5px;
         }
         #vote-message {
             font-size: 14px;
             color: #4F9768;
             margin-top: 10px;
-            text-align: center;
+            margin-bottom: 10px;
         }
         .vote-label {
             font-size: 12px;
             color: #4F9768;
-            text-align: center;
-            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+        #total-votes-container {
+            display: none;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div id="voting-widget">
-        <div id="vote-container">
-            <div>
-                <button id="vote-button">Upvote</button>
-                <div id="personal-vote-count" class="vote-count">0</div>
-                <div class="vote-label">Your Votes</div>
-            </div>
-            <div>
-                <div id="total-vote-count" class="vote-count">0</div>
-                <div class="vote-label">Total Votes</div>
-            </div>
-        </div>
+        <button id="vote-button">Upvote</button>
+        <div id="personal-vote-count" class="vote-count">0</div>
+        <div class="vote-label">Your Votes</div>
         <div id="vote-message"></div>
+        <div id="total-votes-container">
+            <div id="total-vote-count" class="vote-count">0</div>
+            <div class="vote-label">Total Votes</div>
+        </div>
     </div>
 
     <script>
@@ -86,6 +83,7 @@
         const personalVoteCount = document.getElementById('personal-vote-count');
         const totalVoteCount = document.getElementById('total-vote-count');
         const voteMessage = document.getElementById('vote-message');
+        const totalVotesContainer = document.getElementById('total-votes-container');
         const personalStorageKey = 'notionPersonalVoteCount';
         const totalStorageKey = 'notionTotalVoteCount';
         const sessionKey = 'notionVoteSession';
@@ -124,6 +122,7 @@
         function disableVoting() {
             voteButton.disabled = true;
             voteMessage.textContent = "Thanks!";
+            totalVotesContainer.style.display = 'block';
         }
     </script>
 </body>
